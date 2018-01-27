@@ -37,7 +37,17 @@ app.get('/api/persons', (req, res) => {
 
 app.post('/api/persons', (req, res) => {
   const person = req.body
-  const id = getRandomId(4, 1000000000)
+  if (!person.name) {
+    return res.status(400).json({ error: 'name missing' })
+  }
+  if (!person.number) {
+    return res.status(400).json({ error: 'number missing' })
+  }
+  const match = persons.find(p => p.name === person.name)
+  if (match && match.number) {
+    return res.status(400).json({ error: 'person already has a number' })
+  }
+  const id = getRandomId()
   person.id = id
   persons = persons.concat(person)
   res.json(person)
@@ -63,8 +73,6 @@ app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
 
-getRandomId = (min, max) => {
-  min = Math.ceil(min)
-  max = Math.floor(max)
-  return Math.floor(Math.random() * (max - min)) + min
+getRandomId = () => {
+  return Math.floor(Math.random() * (1000000000)) + 4
 }
