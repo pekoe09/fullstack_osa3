@@ -2,6 +2,9 @@ const express = require('express')
 const app = express()
 const bodyParser = require('body-parser')
 const morgan = require('morgan')
+const cors = require('cors')
+
+app.use(cors())
 
 app.use(bodyParser.json())
 
@@ -48,8 +51,8 @@ app.post('/api/persons', (req, res) => {
     return res.status(400).json({ error: 'number missing' })
   }
   const match = persons.find(p => p.name === person.name)
-  if (match && match.number) {
-    return res.status(400).json({ error: 'person already has a number' })
+  if (match) {
+    return res.status(400).json({ error: 'person already exists' })
   }
   const id = getRandomId()
   person.id = id
@@ -58,10 +61,22 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  let match = persons.find(person =>
-    person.id === Number(req.params.id))
+  const match = persons.find(p => p.id === Number(req.params.id))
   if (match) {
     res.json(match)
+  } else {
+    res.status(404).end()
+  }
+})
+
+app.put('/api/persons/:id', (req, res) => {
+  const match = persons.find(p => p.id === Number(req.params.id))
+  if (match) {
+    const newList = persons.filter(p => p.id !== match.id)
+    const person = req.body
+    person.id = match.id
+    persons = newList.concat(person)
+    res.json(person)
   } else {
     res.status(404).end()
   }
