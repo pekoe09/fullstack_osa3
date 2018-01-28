@@ -47,24 +47,41 @@ app.get('/api/persons', (req, res) => {
     .then(persons => {
       res.json(persons.map(Person.format))
     })
+    .catch(error => {
+      console.log(error)
+      res.status(500).json({ error: 'persons could not be retrieved' })
+    })
 })
 
 app.post('/api/persons', (req, res) => {
-  const person = req.body
-  if (!person.name) {
+  // const person = req.body
+  if (!req.body.name) {
     return res.status(400).json({ error: 'name missing' })
   }
-  if (!person.number) {
+  if (!req.body.number) {
     return res.status(400).json({ error: 'number missing' })
   }
-  const match = persons.find(p => p.name === person.name)
-  if (match) {
-    return res.status(400).json({ error: 'person already exists' })
-  }
-  const id = getRandomId()
-  person.id = id
-  persons = persons.concat(person)
-  res.json(person)
+  // const match = persons.find(p => p.name === person.name)
+  // if (match) {
+  //   return res.status(400).json({ error: 'person already exists' })
+  // }
+  // const id = getRandomId()
+  // person.id = id
+  // persons = persons.concat(person)
+  // res.json(person)
+  const person = new Person({
+    name: req.body.name,
+    number: req.body.number
+  })
+  person
+    .save()
+    .then(result => {
+      res.json(Person.format(person))
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(500).json({ error: 'person could not be saved' })
+    })
 })
 
 app.get('/api/persons/:id', (req, res) => {
