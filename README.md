@@ -6,4 +6,5 @@ Kurssin muiden tehtävien vastaukset ovat [omassa repossaan](https://github.com/
 Sovellus pyörii [Herokussa](https://limitless-everglades-27152.herokuapp.com); 
 backendin rajapinta [tässä osoitteessa](https://limitless-everglades-27152.herokuapp.com/api/persons).
 
-MongoDB:n yhteysstringi on laitettu ympäristömuuttujaan.
+MongoDB:n yhteysstringi on laitettu ympäristömuuttujaan; laitan stringin 
+tehtäväpalautuksen kommenttiin.
