@@ -65,7 +65,9 @@ class App extends React.Component {
       .then(response => {
         this.setState({
           persons: this.state.persons.map(person => person.id === newPerson.id ? newPerson : person),
-          message: "Puhelinnumero henkilölle " + newPerson.name + " päivitetty"
+          message: "Puhelinnumero henkilölle " + newPerson.name + " päivitetty",
+          newName: '',
+          newNumber: ''
         })
         setTimeout(() => {
           this.setState({ message: null })
