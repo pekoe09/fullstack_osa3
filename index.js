@@ -48,7 +48,7 @@ app.post('/api/persons', (req, res) => {
   Person
     .find({ name: req.body.name })
     .then(match => {
-      console.log("matchit: ", match)
+      console.log('matchit: ', match)
       if (match.length === 0) {
         const person = new Person({
           name: req.body.name,
@@ -101,6 +101,7 @@ app.delete('/api/persons/:id', (req, res) => {
       res.status(204).end()
     })
     .catch(error => {
+      console.log(error)
       res.status(400).send({ error: 'malformatted id' })
     })
 })
