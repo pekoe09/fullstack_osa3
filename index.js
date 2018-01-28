@@ -45,22 +45,27 @@ app.post('/api/persons', (req, res) => {
   if (!req.body.number) {
     return res.status(400).json({ error: 'number missing' })
   }
-  // const match = persons.find(p => p.name === person.name)
-  // if (match) {
-  //   return res.status(400).json({ error: 'person already exists' })
-  // }
-  const person = new Person({
-    name: req.body.name,
-    number: req.body.number
-  })
-  person
-    .save()
-    .then(result => {
-      res.json(Person.format(person))
-    })
-    .catch(error => {
-      console.log(error)
-      res.status(500).json({ error: 'person could not be saved' })
+  Person
+    .find({ name: req.body.name })
+    .then(match => {
+      console.log("matchit: ", match)
+      if (match.length === 0) {
+        const person = new Person({
+          name: req.body.name,
+          number: req.body.number
+        })
+        person
+          .save()
+          .then(result => {
+            res.json(Person.format(person))
+          })
+          .catch(error => {
+            console.log(error)
+            res.status(500).json({ error: 'person could not be saved' })
+          })
+      } else {
+        res.status(400).json({ error: 'person already exists' })
+      }
     })
 })
 
