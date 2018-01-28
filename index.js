@@ -54,7 +54,6 @@ app.get('/api/persons', (req, res) => {
 })
 
 app.post('/api/persons', (req, res) => {
-  // const person = req.body
   if (!req.body.name) {
     return res.status(400).json({ error: 'name missing' })
   }
@@ -65,10 +64,6 @@ app.post('/api/persons', (req, res) => {
   // if (match) {
   //   return res.status(400).json({ error: 'person already exists' })
   // }
-  // const id = getRandomId()
-  // person.id = id
-  // persons = persons.concat(person)
-  // res.json(person)
   const person = new Person({
     name: req.body.name,
     number: req.body.number
@@ -94,16 +89,16 @@ app.get('/api/persons/:id', (req, res) => {
 })
 
 app.put('/api/persons/:id', (req, res) => {
-  const match = persons.find(p => p.id === Number(req.params.id))
-  if (match) {
-    const newList = persons.filter(p => p.id !== match.id)
-    const person = req.body
-    person.id = match.id
-    persons = newList.concat(person)
-    res.json(person)
-  } else {
-    res.status(404).end()
-  }
+  const person = req.body
+  Person
+    .findByIdAndUpdate(req.params.id, person, { new: true })
+    .then(updatedPerson => {
+      res.json(Person.format(updatedPerson))
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(400).json({ error: 'malformatted id' })
+    })
 })
 
 app.delete('/api/persons/:id', (req, res) => {
