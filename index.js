@@ -14,31 +14,16 @@ app.use(bodyParser.json())
 morgan.token('body', function (req) { return JSON.stringify(req.body) })
 app.use(morgan(':method :url :body :status :res[content-length] - :response-time ms'))
 
-let persons = [
-  {
-    "name": "Arto Hellas",
-    "number": "040-123456",
-    "id": 1
-  },
-  {
-    "name": "Martti Tienari",
-    "number": "040-123456",
-    "id": 2
-  },
-  {
-    "name": "Arto Järvinen",
-    "number": "040-123456",
-    "id": 3
-  },
-  {
-    "name": "Lea Kutvonen",
-    "number": "040-123456",
-    "id": 4
-  }
-]
-
 app.get('/info', (req, res) => {
-  res.send(`<p>puhelinluettelossa ${persons.length} henkilön tiedot</p><p>${new Date()}</p>`)
+  Person
+    .count({})
+    .then(result => {
+      res.send(`<p>puhelinluettelossa ${result} henkilön tiedot</p><p>${new Date()}</p>`)
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(500).json({ error: 'could not get the person count' })
+    })
 })
 
 app.get('/api/persons', (req, res) => {
@@ -80,12 +65,15 @@ app.post('/api/persons', (req, res) => {
 })
 
 app.get('/api/persons/:id', (req, res) => {
-  const match = persons.find(p => p.id === Number(req.params.id))
-  if (match) {
-    res.json(match)
-  } else {
-    res.status(404).end()
-  }
+  Person
+    .findById(req.params.id)
+    .then(person => {
+      res.json(Person.format(person))
+    })
+    .catch(error => {
+      console.log(error)
+      res.status(404).end()
+    })
 })
 
 app.put('/api/persons/:id', (req, res) => {
@@ -116,7 +104,3 @@ const PORT = process.env.PORT || 3001
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`)
 })
-
-getRandomId = () => {
-  return Math.floor(Math.random() * (1000000000)) + 4
-}
