@@ -1,0 +1,1 @@
+DELETE  https://limitless-everglades-27152.herokuapp.com/api/persons/116401786
